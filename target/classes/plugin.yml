@@ -1,0 +1,19 @@
+name: TheUpgrader
+version: 1.0
+main: com.unlockthecode.upgrader.UpgraderPlugin
+api-version: "1.21"
+authors: [unlockthecode]
+description: "Gambling-style item upgrader for Paper — risk items for a shot at better ones"
+commands:
+  upgrade:
+    description: Main upgrader command
+    usage: /upgrade [config|reload|set|get]
+    permission: theupgrader.use
+    permission-message: "§cYou don't have permission to use this command."
+permissions:
+  theupgrader.admin:
+    description: Admin access to upgrader commands (config, reload, set, get)
+    default: op
+  theupgrader.use:
+    description: Open the upgrade GUI
+    default: true

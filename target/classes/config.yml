@@ -1,0 +1,397 @@
+# ==========================================================================
+# TheUpgrader v1.4.0 configuration
+#
+# Gambling-style item upgrader - risk items for a shot at better ones.
+#
+# Edit this file, then run /upgrade reload in game (or restart the server).
+# Every value is validated on load: invalid entries fall back to their
+# default and print a warning to the console, so a typo can never break
+# the plugin.
+# ==========================================================================
+
+# --------------------------------------------------------------------------
+# Gameplay
+# --------------------------------------------------------------------------
+
+# Win chance = (wager value / target total value) x house-edge, clamped
+# between min-chance and max-chance.
+# 1.0 = perfectly fair odds, 0.9 = 10% house edge. (0.01 - 1.0)
+house-edge: 0.9
+
+# Lowest possible win chance. (0.0 - 1.0)
+min-chance: 0.001
+
+# Highest possible win chance. (0.01 - 1.0)
+max-chance: 0.9
+
+# Spin animation length in ticks (20 ticks = 1 second, range 20-600).
+# 120 = 6 seconds, the tuned default feel.
+spin-ticks: 120
+
+# Maximum number of target items a single upgrade can pay out. (1 - 64)
+max-target-count: 64
+
+# Rate limiting: at most `attempt-limit` upgrades per player per
+# `attempt-window-seconds`. Set either to 0 to disable.
+attempt-limit: 0
+attempt-window-seconds: 0
+
+# Multiplies the computed value of every item. (0.01 - 1000)
+# Use it to inflate or deflate the whole economy at once.
+global-value-multiplier: 1.0
+
+# --------------------------------------------------------------------------
+# Item values
+# --------------------------------------------------------------------------
+# How item prices are built, in order:
+#   1. base-values below are the anchor prices the solver starts from
+#   2. if use-recipe-pricing is true, every craftable item is then priced
+#      from the server's own recipes (custom recipes are priced too)
+#   3. value-overrides pin exact prices that ignore recipes entirely
+#   4. value-multipliers scale individual items on top of everything else
+#      (stacking with global-value-multiplier)
+#   5. anything still unpriced costs fallback-value
+#
+# Raise or lower a base-value to reprice that item and everything the
+# recipe solver derives from it.
+
+# Anchor prices for the recipe solver (material name: price).
+# Rebalanced to typical Minecraft server economy prices.
+base-values:
+  # Tier 0: Near worthless (0.5-1)
+  dirt: 0.5
+  cobblestone: 0.5
+  cobbled_deepslate: 0.5
+  sand: 0.5
+  red_sand: 0.5
+  gravel: 0.5
+  netherrack: 0.5
+  end_stone: 0.5
+  stone: 1.0
+  deepslate: 1.0
+  flint: 1.0
+  bamboo: 1.0
+  cactus: 1.0
+  sugar_cane: 1.0
+  soul_sand: 1.0
+  soul_soil: 1.0
+  clay_ball: 1.0
+  moss_block: 1.0
+  rooted_dirt: 1.0
+  mud: 1.0
+  packed_mud: 1.0
+
+  # Tier 1: Basic renewable (2-5)
+  oak_log: 2.0
+  spruce_log: 2.0
+  birch_log: 2.0
+  jungle_log: 2.0
+  acacia_log: 2.0
+  dark_oak_log: 2.0
+  mangrove_log: 2.0
+  cherry_log: 2.0
+  crimson_stem: 2.0
+  warped_stem: 2.0
+  bamboo_block: 2.0
+  wheat: 2.0
+  potato: 2.0
+  carrot: 2.0
+  beetroot: 2.0
+  apple: 3.0
+  egg: 3.0
+  melon_slice: 2.0
+  glow_berries: 3.0
+  sweet_berries: 2.0
+  chorus_fruit: 3.0
+  kelp: 2.0
+  string: 3.0
+  feather: 2.0
+  bone: 3.0
+  rotten_flesh: 1.0
+  spider_eye: 3.0
+  ink_sac: 2.0
+  phantom_membrane: 4.0
+  wheat_seeds: 0.5
+  short_grass: 0.1
+  fern: 0.1
+  dead_bush: 0.1
+  seagrass: 0.1
+  tall_seagrass: 0.1
+  snowball: 0.5
+
+  # Tier 2: Cooked food & common drops (4-8)
+  porkchop: 4.0
+  beef: 4.0
+  chicken: 3.0
+  mutton: 4.0
+  cod: 3.0
+  salmon: 3.0
+  rabbit: 3.0
+  tropical_fish: 2.0
+  pufferfish: 4.0
+  coal: 5.0
+  charcoal: 4.0
+  redstone: 6.0
+  glowstone_dust: 6.0
+  quartz: 8.0
+  ice: 4.0
+  frosted_ice: 4.0
+  lapis_lazuli: 12.0
+  leather: 5.0
+  slime_ball: 8.0
+  rabbit_hide: 2.0
+  prismarine_shard: 8.0
+  prismarine_crystals: 8.0
+  turtle_scute: 12.0
+  copper_ingot: 8.0
+  raw_copper: 6.0
+  amethyst_shard: 10.0
+  raw_iron: 10.0
+  raw_gold: 15.0
+
+  # Tier 3: Processed materials (15-40)
+  hanging_roots: 8.0
+  gunpowder: 12.0
+  magma_cream: 15.0
+  glow_ink_sac: 12.0
+  blaze_powder: 18.0
+  packed_ice: 10.0
+  blue_ice: 20.0
+  big_dripleaf: 8.0
+  small_dripleaf: 8.0
+  honeycomb: 15.0
+  moss_carpet: 5.0
+  iron_ingot: 18.0
+  mangrove_roots: 8.0
+  muddy_mangrove_roots: 8.0
+  obsidian: 15.0
+
+  # Tier 4: Valuable commodities (30-80)
+  ender_pearl: 25.0
+  blaze_rod: 30.0
+  nautilus_shell: 35.0
+  heart_of_the_sea: 60.0
+  gold_ingot: 35.0
+  wind_charge: 40.0
+  ghast_tear: 50.0
+  rabbit_foot: 25.0
+  shulker_shell: 40.0
+  emerald: 80.0
+
+  # Tier 5: Rare & high-value (100-500)
+  breeze_rod: 100.0
+  echo_shard: 150.0
+  sponge: 120.0
+  diamond: 180.0
+  heavy_core: 300.0
+  saddle: 100.0
+  name_tag: 100.0
+  netherite_upgrade_smithing_template: 500.0
+
+  # Tier 6: Very rare (600-2000)
+  ancient_debris: 700.0
+  netherite_scrap: 700.0
+  wither_skeleton_skull: 800.0
+  totem_of_undying: 1200.0
+  trident: 800.0
+
+  # Tier 7: Elite (3000-8000)
+  enchanted_golden_apple: 3000.0
+  elytra: 5000.0
+  nether_star: 4000.0
+
+  # Tier 8: Unique/Unobtainable (50000+)
+  dragon_egg: 50000.0
+
+  # 1.20/1.21+ newer materials
+  netherite_ingot: 3000.0
+  netherite_upgrade: 500.0
+  iron_nugget: 2.0
+  gold_nugget: 4.0
+
+# When false, recipes are ignored: an item costs exactly its base-values
+# entry, or fallback-value if it has none. Easier to reason about.
+use-recipe-pricing: true
+
+# Price for items with no anchor and no recipe. (must be > 0)
+fallback-value: 3.0
+
+# Exact prices that ignore recipes completely (material: price).
+# Example:
+#   value-overrides:
+#     diamond: 500.0
+value-overrides: {}
+
+# Per-item multipliers on top of the final price (material: multiplier).
+# Example:
+#   value-multipliers:
+#     netherite_ingot: 2.0
+value-multipliers: {}
+
+# Materials that cannot be wagered or targeted, in addition to the
+# built-in blacklist of technical and unobtainable items.
+# Example:
+#   blacklist: [shulker_box, ender_chest]
+blacklist: []
+
+# --------------------------------------------------------------------------
+# Catalog categories
+# --------------------------------------------------------------------------
+# Order = tab order in the catalog. A category with a well-known id and no
+# `items` list uses the built-in smart classifier. Well-known ids:
+#   blocks, minerals, tools, combat, food, farming, redstone, misc
+# Give a category an explicit `items` list to control it exactly, or invent
+# your own ids for fully custom categories. The id `all` is special: it
+# always contains every upgradable item.
+
+categories:
+  - id: all
+    name: "All Items"
+    icon: CHEST
+  - id: blocks
+    name: "Blocks"
+    icon: GRASS_BLOCK
+  - id: minerals
+    name: "Ores & Ingots"
+    icon: GOLD_INGOT
+  - id: tools
+    name: "Tools & Utility"
+    icon: IRON_PICKAXE
+  - id: combat
+    name: "Weapons & Armor"
+    icon: DIAMOND_SWORD
+  - id: food
+    name: "Food"
+    icon: COOKED_BEEF
+  - id: farming
+    name: "Farming & Nature"
+    icon: WHEAT
+  - id: redstone
+    name: "Redstone & Rails"
+    icon: REDSTONE
+  - id: misc
+    name: "Everything Else"
+    icon: PAPER
+
+# Custom category example - uncomment to use:
+#   - id: treasures
+#     name: "Treasures"
+#     icon: NETHER_STAR
+#     items: [diamond, emerald, ancient_debris, elytra, totem_of_undying]
+
+# --------------------------------------------------------------------------
+# GUI layout
+# --------------------------------------------------------------------------
+# Chest slots are numbered 0-53, left to right, top to bottom
+# (each row is 9 slots: row 0 = 0-8, row 1 = 9-17, ... row 5 = 45-53).
+
+gui:
+  # Main upgrader view buttons.
+  slots:
+    info: 4            # win streak display (left-click only, no book)
+    wager: 10          # the wager slot
+    arrow: 13          # decoration between wager and target
+    target: 16         # the target slot
+    stats: 22          # stats GUI shortcut button
+    count-minus32: 28  # -32 button
+    count-minus16: 29  # -16 button
+    count-minus1: 30   # -1 button
+    count: 31          # count display (click to reset to 1)
+    count-plus1: 32    # +1 button
+    count-plus16: 33   # +16 button
+    count-plus32: 34   # +32 button
+    catalog: 39        # catalog button
+    upgrade: 40        # UPGRADE button
+    close: 41          # close button
+
+  # Where category tabs appear on the category selection screen.
+  # (at most 9; extra categories are not shown)
+  category-slots: [12, 13, 14, 21, 22, 23, 30, 31, 32]
+
+  # Catalog view navigation.
+  catalog:
+    prev: 45           # previous page arrow
+    page-indicator: 48 # "page x / y" display
+    back: 50           # back to categories
+    next: 53           # next page arrow
+
+  # The reel used by the spin animation. The reel plays between the wager and
+  # target displays, so do NOT include the wager, target or border slots
+  # (9, 10, 16, 17 in the default layout) - that would overwrite them mid-spin.
+  # Default: 5 slots centered (11-15)
+  spin-slots: [11, 12, 13, 14, 15]
+
+# --------------------------------------------------------------------------
+# Quick-pick presets
+# --------------------------------------------------------------------------
+# The preset buttons shown under the wager/target row. Each preset needs:
+#   label  - button text
+#   icon   - button material
+#   color  - a ChatColor name (YELLOW, GOLD, RED, GREEN, AQUA, ...)
+#   slot   - which chest slot the button sits in (0-53)
+# and exactly ONE of:
+#   multiplier - pick a target worth (wager x multiplier)
+#   chance     - pick a target sized for roughly that win chance (0-1)
+
+presets:
+  - label: "×2"
+    icon: GOLD_NUGGET
+    color: YELLOW
+    slot: 19
+    multiplier: 2.0
+  - label: "×4"
+    icon: GOLD_INGOT
+    color: YELLOW
+    slot: 20
+    multiplier: 4.0
+  - label: "×8"
+    icon: GOLD_BLOCK
+    color: YELLOW
+    slot: 21
+    multiplier: 8.0
+  - label: "30%"
+    icon: RED_DYE
+    color: RED
+    slot: 23
+    chance: 0.30
+  - label: "50%"
+    icon: ORANGE_DYE
+    color: GOLD
+    slot: 24
+    chance: 0.50
+  - label: "70%"
+    icon: LIME_DYE
+    color: GREEN
+    slot: 25
+    chance: 0.70
+
+# --------------------------------------------------------------------------
+# Statistics GUI layout
+# --------------------------------------------------------------------------
+# Configure the slots for the statistics GUI (opened via /upgrade stats or the
+# stats button in the main upgrader GUI).
+stats-gui:
+  # Main menu buttons
+  player-stats: 19     # Your stats button
+  leaderboards: 21     # Leaderboards button
+  achievements: 23     # Achievements button
+  server-stats: 25     # Server stats button
+  back: 45             # Back button (player stats view)
+  close: 53            # Close button
+
+  # Content area slots (used for stats display, leaderboard entries, achievements)
+  content-slots: [10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34, 37, 38, 39, 40, 41, 42, 43]
+
+  # Leaderboard view navigation (bottom row)
+  leaderboard-prev: 45
+  leaderboard-back: 48
+  leaderboard-indicator: 49
+  leaderboard-next: 53
+
+  # Achievement view
+  achievement-back: 45
+  achievement-close: 53
+
+  # Server stats view
+  server-stats-back: 45
+  server-stats-close: 53
